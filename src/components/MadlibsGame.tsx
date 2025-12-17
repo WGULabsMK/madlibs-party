@@ -471,7 +471,7 @@ No one passed, but everyone agreed it was the most educational celebration ever.
 
         <Card hover onClick={handleAdminAccess} className="cursor-pointer">
           <div className="flex items-center gap-4">
-            <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-violet-500 to-violet-700 flex items-center justify-center">
+            <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-brand-blue to-brand-blue-dark flex items-center justify-center">
               <Shield className="w-8 h-8 text-white" />
             </div>
             <div>
@@ -564,7 +564,7 @@ No one passed, but everyone agreed it was the most educational celebration ever.
                     : '✅ Ended'}
               </Badge>
               <div className="flex items-center gap-2">
-                <div className="px-4 py-2 bg-violet-100 rounded-lg font-bold text-violet-700 text-lg tracking-widest">
+                <div className="px-4 py-2 bg-brand-blue/10 rounded-lg font-bold text-brand-blue text-lg tracking-widest">
                   {currentGame.code}
                 </div>
                 <Button
@@ -603,7 +603,7 @@ No one passed, but everyone agreed it was the most educational celebration ever.
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
           <Card className="text-center">
-            <div className="text-5xl font-bold text-violet-600 font-display">{playerCount}</div>
+            <div className="text-5xl font-bold text-brand-blue font-display">{playerCount}</div>
             <div className="text-gray-500">Players Joined</div>
             <div className="text-xs text-gray-400 mt-1">(Max: {MAX_PLAYERS})</div>
           </Card>
@@ -637,7 +637,7 @@ No one passed, but everyone agreed it was the most educational celebration ever.
                   <div
                     key={id}
                     className={`px-4 py-2 rounded-full font-semibold flex items-center gap-2 ${
-                      submitted ? 'bg-emerald-100 text-emerald-700' : 'bg-violet-100 text-violet-700'
+                      submitted ? 'bg-emerald-100 text-emerald-700' : 'bg-brand-blue/10 text-brand-blue'
                     }`}
                   >
                     {submitted && '✅'} {player.name}
@@ -738,8 +738,8 @@ No one passed, but everyone agreed it was the most educational celebration ever.
               The host will reveal the hilarious results soon. In the meantime, test your AI knowledge!
             </p>
             <div className="mt-4 flex items-center justify-center gap-2">
-              <div className="w-2 h-2 bg-violet-500 rounded-full animate-pulse"></div>
-              <span className="text-violet-600 text-sm font-medium">Waiting for host...</span>
+              <div className="w-2 h-2 bg-brand-blue rounded-full animate-pulse"></div>
+              <span className="text-brand-blue text-sm font-medium">Waiting for host...</span>
             </div>
           </Card>
           <TriviaBox />
@@ -758,8 +758,8 @@ No one passed, but everyone agreed it was the most educational celebration ever.
             <p className="text-gray-500 mt-2">
               Your answers have been submitted. The host will end the game soon!
             </p>
-            <div className="mt-4 p-4 bg-violet-100 rounded-xl">
-              <p className="text-violet-700 font-semibold">
+            <div className="mt-4 p-4 bg-brand-blue/10 rounded-xl">
+              <p className="text-brand-blue font-semibold">
                 Players in game: {Object.keys(currentGame.players || {}).length}
               </p>
             </div>
@@ -801,7 +801,7 @@ No one passed, but everyone agreed it was the most educational celebration ever.
                 >
                   <label className="block mb-2">
                     <div className="flex items-center gap-2 font-bold text-gray-800">
-                      <span className="w-7 h-7 rounded-full bg-violet-600 text-white flex items-center justify-center text-sm font-bold">
+                      <span className="w-7 h-7 rounded-full bg-brand-blue text-white flex items-center justify-center text-sm font-bold">
                         {i + 1}
                       </span>
                       {blank.type}
@@ -821,7 +821,7 @@ No one passed, but everyone agreed it was the most educational celebration ever.
                       setPlayerAnswers({ ...playerAnswers, [blank.id]: e.target.value })
                     }
                     placeholder={typeHint ? `e.g., ${typeHint.examples.split(',')[0].trim()}` : `Enter a ${blank.type.toLowerCase()}...`}
-                    className="w-full px-4 py-3 text-base border-2 border-gray-300 rounded-lg bg-white outline-none focus:border-violet-500 transition-colors"
+                    className="w-full px-4 py-3 text-base border-2 border-gray-300 rounded-lg bg-white outline-none focus:border-brand-blue transition-colors"
                   />
                 </div>
               );
@@ -846,7 +846,7 @@ No one passed, but everyone agreed it was the most educational celebration ever.
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-violet-50 to-gray-100">
+    <div className="min-h-screen bg-app-bg">
       <div className="p-6 max-w-6xl mx-auto">
         {view === 'home' && alert && <Alert variant={alert.variant}>{alert.message}</Alert>}
         {view === 'home' && renderHome()}

@@ -25,7 +25,7 @@ export function Select({ label, value, onChange, options, className, ...props }:
         onChange={(e) => onChange?.(e.target.value)}
         className={cn(
           'w-full px-4 py-3 text-base border-2 border-gray-300 rounded-xl bg-white text-gray-900 cursor-pointer outline-none',
-          'focus:border-violet-500 focus:ring-2 focus:ring-violet-500/20 transition-colors',
+          'focus:border-brand-blue focus:ring-2 focus:ring-brand-blue/20 transition-colors',
           className
         )}
         {...props}

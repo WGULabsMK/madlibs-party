@@ -37,7 +37,7 @@ export function AdminLogin({ onLogin, onBack, showAlert }: AdminLoginProps) {
 
       <Card>
         <div className="flex justify-center mb-6">
-          <div className="w-20 h-20 rounded-full bg-gradient-to-br from-violet-500 to-violet-700 flex items-center justify-center">
+          <div className="w-20 h-20 rounded-full bg-gradient-to-br from-brand-blue to-brand-blue-dark flex items-center justify-center">
             <Lock className="w-10 h-10 text-white" />
           </div>
         </div>

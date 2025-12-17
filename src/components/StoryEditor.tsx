@@ -80,11 +80,11 @@ export function StoryEditor({ story, blanks, onStoryChange, onBlanksChange }: St
             onSelect={handleTextSelect}
             placeholder="Enter your Mad Libs story here. Then select text and click 'Insert Blank' to create fill-in-the-blank spots."
             rows={10}
-            className="w-full px-4 py-3 text-base border-2 border-gray-300 rounded-xl bg-white text-gray-900 outline-none resize-y leading-relaxed focus:border-violet-500 focus:ring-2 focus:ring-violet-500/20 transition-colors"
+            className="w-full px-4 py-3 text-base border-2 border-gray-300 rounded-xl bg-white text-gray-900 outline-none resize-y leading-relaxed focus:border-brand-blue focus:ring-2 focus:ring-brand-blue/20 transition-colors"
           />
         </div>
 
-        <div className="flex gap-3 items-end flex-wrap p-4 bg-violet-50 rounded-xl">
+        <div className="flex gap-3 items-end flex-wrap p-4 bg-brand-blue/10 rounded-xl">
           <div className="flex-1 min-w-[200px]">
             <Select
               label="Blank Type"
@@ -118,9 +118,9 @@ export function StoryEditor({ story, blanks, onStoryChange, onBlanksChange }: St
             {blanks.map((blank, i) => (
               <div
                 key={blank.id}
-                className="inline-flex items-center gap-2 px-3 py-2 bg-violet-100 rounded-lg"
+                className="inline-flex items-center gap-2 px-3 py-2 bg-brand-blue/10 rounded-lg"
               >
-                <span className="font-bold text-violet-700">{i + 1}.</span>
+                <span className="font-bold text-brand-blue">{i + 1}.</span>
                 <span className="text-gray-700">{blank.type}</span>
                 <button
                   onClick={() => removeBlank(blank.id)}

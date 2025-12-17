@@ -108,7 +108,7 @@ export function AdminDashboard({ onCreateGame, onOpenGame, onLogout, showAlert }
       {/* Stats Cards */}
       <div className="grid grid-cols-2 md:grid-cols-5 gap-3 mb-6">
         <Card className="text-center py-4">
-          <div className="text-3xl font-bold text-violet-600 font-display">{stats.total}</div>
+          <div className="text-3xl font-bold text-brand-blue font-display">{stats.total}</div>
           <div className="text-xs text-gray-500 uppercase tracking-wide">Total Games</div>
         </Card>
         <Card className="text-center py-4">
@@ -162,7 +162,7 @@ export function AdminDashboard({ onCreateGame, onOpenGame, onLogout, showAlert }
             {games.map(game => (
               <div
                 key={game.code}
-                className="p-4 bg-gray-50 rounded-xl border border-gray-200 hover:border-violet-300 hover:bg-violet-50 transition-colors"
+                className="p-4 bg-gray-50 rounded-xl border border-gray-200 hover:border-brand-blue/30 hover:bg-brand-blue/5 transition-colors"
               >
                 <div className="flex flex-wrap items-center justify-between gap-3">
                   <div className="flex-1 min-w-0">
@@ -171,7 +171,7 @@ export function AdminDashboard({ onCreateGame, onOpenGame, onLogout, showAlert }
                       {getStatusBadge(game.status)}
                     </div>
                     <div className="flex flex-wrap items-center gap-3 text-sm text-gray-500">
-                      <span className="font-mono bg-violet-100 text-violet-700 px-2 py-0.5 rounded font-bold">
+                      <span className="font-mono bg-brand-blue/10 text-brand-blue px-2 py-0.5 rounded font-bold">
                         {game.code}
                       </span>
                       <span className="flex items-center gap-1">

@@ -16,6 +16,11 @@
   --color-success-hover: #059669;
   --color-error: #EF4444;
   --color-error-hover: #DC2626;
+
+  /* Custom blue theme colors */
+  --color-brand-blue: #06558C;
+  --color-brand-blue-dark: #08558B;
+  --color-app-bg: #3297CD;
 }
 
 /* Global styles */

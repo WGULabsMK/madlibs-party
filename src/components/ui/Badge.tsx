@@ -10,7 +10,7 @@ interface BadgeProps {
 }
 
 const variantStyles: Record<BadgeVariant, string> = {
-  primary: 'bg-violet-100 text-violet-700',
+  primary: 'bg-brand-blue/10 text-brand-blue',
   success: 'bg-emerald-100 text-emerald-700',
   warning: 'bg-amber-100 text-amber-700',
   error: 'bg-red-100 text-red-700',

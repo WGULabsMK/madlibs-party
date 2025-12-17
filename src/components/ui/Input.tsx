@@ -24,7 +24,7 @@ export function Input(props: InputProps) {
 
   const inputStyles = cn(
     'w-full px-4 py-3 text-base border-2 rounded-xl bg-white text-gray-900 outline-none transition-colors',
-    error ? 'border-red-500 focus:border-red-500' : 'border-gray-300 focus:border-violet-500 focus:ring-2 focus:ring-violet-500/20',
+    error ? 'border-red-500 focus:border-red-500' : 'border-gray-300 focus:border-brand-blue focus:ring-2 focus:ring-brand-blue/20',
     className
   );
 

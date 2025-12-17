@@ -67,11 +67,11 @@ export function TriviaBox({ className = '' }: TriviaBoxProps) {
     <Card className={`${className}`}>
       <div className="flex items-center justify-between mb-4">
         <div className="flex items-center gap-2">
-          <Brain className="w-6 h-6 text-violet-600" />
+          <Brain className="w-6 h-6 text-brand-blue" />
           <h3 className="text-lg font-bold font-display text-gray-800">AI Trivia</h3>
         </div>
         {questionsAnswered > 0 && (
-          <div className="flex items-center gap-1 text-sm bg-violet-100 text-violet-700 px-3 py-1 rounded-full">
+          <div className="flex items-center gap-1 text-sm bg-brand-blue/10 text-brand-blue px-3 py-1 rounded-full">
             <Trophy className="w-4 h-4" />
             {score}/{questionsAnswered}
           </div>
@@ -85,7 +85,7 @@ export function TriviaBox({ className = '' }: TriviaBoxProps) {
           let buttonStyle = 'bg-gray-50 border-gray-200 hover:bg-gray-100 hover:border-gray-300';
 
           if (selectedAnswer === index && !showResult) {
-            buttonStyle = 'bg-violet-100 border-violet-400';
+            buttonStyle = 'bg-brand-blue/10 border-brand-blue';
           } else if (showResult) {
             if (index === currentQuestion.correctIndex) {
               buttonStyle = 'bg-emerald-100 border-emerald-400';

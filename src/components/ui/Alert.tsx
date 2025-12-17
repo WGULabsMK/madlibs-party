@@ -12,9 +12,9 @@ interface AlertProps {
 
 const variantStyles: Record<AlertVariant, { bg: string; border: string; icon: ReactNode }> = {
   info: {
-    bg: 'bg-violet-50',
-    border: 'border-l-violet-500',
-    icon: <Info className="w-5 h-5 text-violet-500" />,
+    bg: 'bg-brand-blue/10',
+    border: 'border-l-brand-blue',
+    icon: <Info className="w-5 h-5 text-brand-blue" />,
   },
   success: {
     bg: 'bg-emerald-50',
