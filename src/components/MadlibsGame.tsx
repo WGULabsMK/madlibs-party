@@ -3,6 +3,7 @@ import { toast } from 'sonner';
 import { Sparkles, Gamepad2, Play, Square, Edit3, Download, ArrowLeft, Users, Send } from 'lucide-react';
 import { Card, Button, Input, Header, Badge, Alert } from './ui';
 import { StoryEditor } from './StoryEditor';
+import { DevBar } from './DevBar';
 import { generateId, generateGameCode } from '@/utils/helpers';
 import { generatePDF } from '@/utils/pdfGenerator';
 import { useGameStorage } from '@/hooks/useLocalStorage';
@@ -674,6 +675,19 @@ Meanwhile, the office printer was [[BLANK:${id17}:Verb ending in -ing]] nonstop,
         {view === 'player-game' && renderPlayerGame()}
       </div>
       <div className="text-center py-6 text-gray-400 text-sm">Made with 🎭 for WGU Labs</div>
+
+      <DevBar
+        currentGame={currentGame}
+        onGameUpdate={setCurrentGame}
+        onNavigate={setView}
+        onLoadSample={loadSampleStory}
+        onSaveGame={handleSaveGame}
+        onStartGame={handleStartGame}
+        onEndGame={handleEndGame}
+        setPlayerId={setPlayerId}
+        setPlayerName={setPlayerName}
+        saveGameToStorage={saveGame}
+      />
     </div>
   );
 }
