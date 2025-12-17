@@ -1,9 +1,12 @@
 import { useState, useEffect, useCallback } from 'react';
 import { toast } from 'sonner';
-import { Sparkles, Gamepad2, Play, Square, Edit3, Download, ArrowLeft, Users, Send } from 'lucide-react';
+import { Gamepad2, Play, Square, Edit3, Download, ArrowLeft, Users, Send, Eye, Shield } from 'lucide-react';
 import { Card, Button, Input, Header, Badge, Alert } from './ui';
 import { StoryEditor } from './StoryEditor';
 import { DevBar } from './DevBar';
+import { TriviaBox } from './TriviaBox';
+import { AdminLogin } from './AdminLogin';
+import { AdminDashboard } from './AdminDashboard';
 import { generateId, generateGameCode } from '@/utils/helpers';
 import { generatePDF } from '@/utils/pdfGenerator';
 import { useGameStorage } from '@/hooks/useLocalStorage';
@@ -47,8 +50,30 @@ export function MadlibsGame() {
   const [editorBlanks, setEditorBlanks] = useState<Blank[]>([]);
   const [playerAnswers, setPlayerAnswers] = useState<PlayerAnswers>({});
   const [hasSubmitted, setHasSubmitted] = useState(false);
+  const [isAdmin, setIsAdmin] = useState(false);
 
   const { saveGame, loadGame } = useGameStorage();
+
+  // Check for existing admin session on mount
+  useEffect(() => {
+    const adminAuth = localStorage.getItem('adminAuth');
+    const adminAuthTime = localStorage.getItem('adminAuthTime');
+
+    if (adminAuth === 'true' && adminAuthTime) {
+      // Session expires after 24 hours
+      const authTime = parseInt(adminAuthTime, 10);
+      const now = Date.now();
+      const twentyFourHours = 24 * 60 * 60 * 1000;
+
+      if (now - authTime < twentyFourHours) {
+        setIsAdmin(true);
+      } else {
+        // Session expired
+        localStorage.removeItem('adminAuth');
+        localStorage.removeItem('adminAuthTime');
+      }
+    }
+  }, []);
 
   // Poll for game updates
   useEffect(() => {
@@ -71,10 +96,37 @@ export function MadlibsGame() {
   }, []);
 
   const handleCreateGame = () => {
+    setCurrentGame(null);
     setEditorTitle('');
     setEditorStory('');
     setEditorBlanks([]);
     setView('admin-create');
+  };
+
+  const handleAdminAccess = () => {
+    if (isAdmin) {
+      setView('admin-dashboard');
+    } else {
+      setView('admin-login');
+    }
+  };
+
+  const handleAdminLogin = () => {
+    setIsAdmin(true);
+    setView('admin-dashboard');
+  };
+
+  const handleAdminLogout = () => {
+    setIsAdmin(false);
+    setView('home');
+  };
+
+  const handleOpenGame = (game: Game) => {
+    setCurrentGame(game);
+    setEditorTitle(game.title);
+    setEditorStory(game.story);
+    setEditorBlanks(game.blanks);
+    setView('admin-game');
   };
 
   const loadSampleStory = () => {
@@ -179,6 +231,7 @@ No one passed, but everyone agreed it was the most educational celebration ever.
       players: currentGame?.players || {},
       submissions: currentGame?.submissions || {},
       selectedAnswers: null,
+      showResultsToPlayers: currentGame?.showResultsToPlayers || false,
       createdAt: currentGame?.createdAt || new Date().toISOString(),
       updatedAt: new Date().toISOString(),
     };
@@ -212,12 +265,25 @@ No one passed, but everyone agreed it was the most educational celebration ever.
       ...currentGame,
       status: 'ended',
       selectedAnswers: selected as Record<string, SelectedAnswer>,
+      showResultsToPlayers: false,
       updatedAt: new Date().toISOString(),
     };
     saveGame(updated.code, updated);
     setLoading(false);
     setCurrentGame(updated);
-    showAlert('Game ended! View the results below.', 'success');
+    showAlert('Game ended! Click "Show Results to Players" when ready to reveal the story.', 'success');
+  };
+
+  const handleShowResultsToPlayers = () => {
+    if (!currentGame) return;
+    const updated: Game = {
+      ...currentGame,
+      showResultsToPlayers: true,
+      updatedAt: new Date().toISOString(),
+    };
+    saveGame(updated.code, updated);
+    setCurrentGame(updated);
+    showAlert('Results are now visible to all players!', 'success');
   };
 
   const handleDownloadPDF = () => {
@@ -348,14 +414,14 @@ No one passed, but everyone agreed it was the most educational celebration ever.
       <Header title="Mad Libs Party" subtitle="Create hilarious stories with friends!" />
 
       <div className="space-y-6">
-        <Card hover onClick={handleCreateGame} className="cursor-pointer">
+        <Card hover onClick={handleAdminAccess} className="cursor-pointer">
           <div className="flex items-center gap-4">
             <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-violet-500 to-violet-700 flex items-center justify-center">
-              <Sparkles className="w-8 h-8 text-white" />
+              <Shield className="w-8 h-8 text-white" />
             </div>
             <div>
-              <h3 className="text-2xl font-bold font-display text-gray-800">Create Game</h3>
-              <p className="text-gray-500">Host a new Mad Libs game</p>
+              <h3 className="text-2xl font-bold font-display text-gray-800">Admin Dashboard</h3>
+              <p className="text-gray-500">{isAdmin ? 'Manage your games' : 'Login to create & manage games'}</p>
             </div>
           </div>
         </Card>
@@ -423,13 +489,12 @@ No one passed, but everyone agreed it was the most educational celebration ever.
       <div className="flex justify-between mt-6">
         <Button
           onClick={() => {
-            setView('home');
-            setCurrentGame(null);
+            setView('admin-dashboard');
           }}
           variant="ghost"
           icon={<ArrowLeft className="w-4 h-4" />}
         >
-          Back
+          Back to Dashboard
         </Button>
         <Button onClick={handleSaveGame} variant="success" disabled={loading}>
           {loading ? 'Saving...' : '💾 Save & Continue'}
@@ -438,8 +503,8 @@ No one passed, but everyone agreed it was the most educational celebration ever.
     </div>
   );
 
-  // Admin Dashboard View
-  const renderAdminDashboard = () => {
+  // Admin Game View (individual game management)
+  const renderAdminGameView = () => {
     if (!currentGame) return null;
 
     const playerCount = Object.keys(currentGame.players || {}).length;
@@ -542,12 +607,27 @@ No one passed, but everyone agreed it was the most educational celebration ever.
 
         {currentGame.status === 'ended' && currentGame.selectedAnswers && (
           <Card className="mb-6">
-            <div className="flex justify-between items-center mb-4">
+            <div className="flex justify-between items-center mb-4 flex-wrap gap-3">
               <h3 className="text-xl font-bold font-display text-gray-800">📖 Final Story</h3>
-              <Button onClick={handleDownloadPDF} variant="accent" icon={<Download className="w-4 h-4" />}>
-                Download PDF
-              </Button>
+              <div className="flex gap-2 flex-wrap">
+                {!currentGame.showResultsToPlayers && (
+                  <Button onClick={handleShowResultsToPlayers} variant="success" icon={<Eye className="w-4 h-4" />}>
+                    Show Results to Players
+                  </Button>
+                )}
+                {currentGame.showResultsToPlayers && (
+                  <Badge variant="success">Players can see results</Badge>
+                )}
+                <Button onClick={handleDownloadPDF} variant="accent" icon={<Download className="w-4 h-4" />}>
+                  Download PDF
+                </Button>
+              </div>
             </div>
+            {!currentGame.showResultsToPlayers && (
+              <div className="mb-4 p-3 bg-amber-100 rounded-lg text-amber-800 text-sm">
+                Players are currently on a waiting screen with trivia. Click "Show Results to Players" when you're ready to reveal the story!
+              </div>
+            )}
             <div
               className="p-6 bg-amber-50 rounded-xl leading-relaxed text-base whitespace-pre-wrap"
               dangerouslySetInnerHTML={{
@@ -559,13 +639,12 @@ No one passed, but everyone agreed it was the most educational celebration ever.
 
         <Button
           onClick={() => {
-            setView('home');
-            setCurrentGame(null);
+            setView('admin-dashboard');
           }}
           variant="ghost"
           icon={<ArrowLeft className="w-4 h-4" />}
         >
-          Back to Home
+          Back to Dashboard
         </Button>
       </div>
     );
@@ -575,8 +654,8 @@ No one passed, but everyone agreed it was the most educational celebration ever.
   const renderPlayerGame = () => {
     if (!currentGame) return null;
 
-    // Game ended - show results
-    if (currentGame.status === 'ended') {
+    // Game ended and results are visible - show the story
+    if (currentGame.status === 'ended' && currentGame.showResultsToPlayers) {
       return (
         <div className="max-w-3xl mx-auto">
           <Header title="Game Over!" subtitle={currentGame.title} />
@@ -604,24 +683,45 @@ No one passed, but everyone agreed it was the most educational celebration ever.
       );
     }
 
-    // Already submitted - waiting screen
+    // Game ended but waiting for host to reveal results - show trivia waiting screen
+    if (currentGame.status === 'ended' && !currentGame.showResultsToPlayers) {
+      return (
+        <div className="max-w-xl mx-auto">
+          <Header title="Game Over!" subtitle="Waiting for the host to reveal results..." />
+          <Card className="text-center mb-6">
+            <div className="text-7xl mb-4">🎭</div>
+            <h3 className="text-2xl font-bold font-display text-gray-800">The story is ready!</h3>
+            <p className="text-gray-500 mt-2">
+              The host will reveal the hilarious results soon. In the meantime, test your AI knowledge!
+            </p>
+            <div className="mt-4 flex items-center justify-center gap-2">
+              <div className="w-2 h-2 bg-violet-500 rounded-full animate-pulse"></div>
+              <span className="text-violet-600 text-sm font-medium">Waiting for host...</span>
+            </div>
+          </Card>
+          <TriviaBox />
+        </div>
+      );
+    }
+
+    // Already submitted - waiting screen with trivia
     if (hasSubmitted) {
       return (
         <div className="max-w-xl mx-auto">
           <Header title="Answers Submitted!" subtitle="Waiting for the game to end..." />
-          <Card className="text-center">
+          <Card className="text-center mb-6">
             <div className="text-7xl mb-4">🎉</div>
             <h3 className="text-2xl font-bold font-display text-gray-800">Great job, {playerName}!</h3>
             <p className="text-gray-500 mt-2">
-              Your answers have been submitted. The host will end the game soon, and then you'll see
-              the hilarious results!
+              Your answers have been submitted. The host will end the game soon!
             </p>
-            <div className="mt-6 p-4 bg-violet-100 rounded-xl">
+            <div className="mt-4 p-4 bg-violet-100 rounded-xl">
               <p className="text-violet-700 font-semibold">
                 Players in game: {Object.keys(currentGame.players || {}).length}
               </p>
             </div>
           </Card>
+          <TriviaBox />
         </div>
       );
     }
@@ -707,8 +807,23 @@ No one passed, but everyone agreed it was the most educational celebration ever.
       <div className="p-6 max-w-6xl mx-auto">
         {view === 'home' && alert && <Alert variant={alert.variant}>{alert.message}</Alert>}
         {view === 'home' && renderHome()}
+        {view === 'admin-login' && (
+          <AdminLogin
+            onLogin={handleAdminLogin}
+            onBack={() => setView('home')}
+            showAlert={showAlert}
+          />
+        )}
+        {view === 'admin-dashboard' && (
+          <AdminDashboard
+            onCreateGame={handleCreateGame}
+            onOpenGame={handleOpenGame}
+            onLogout={handleAdminLogout}
+            showAlert={showAlert}
+          />
+        )}
         {(view === 'admin-create' || view === 'admin-edit') && renderAdminEditor()}
-        {view === 'admin-game' && renderAdminDashboard()}
+        {view === 'admin-game' && renderAdminGameView()}
         {view === 'player-game' && renderPlayerGame()}
       </div>
       <div className="text-center py-6 text-gray-400 text-sm">Made with 🎭 for WGU Labs</div>
