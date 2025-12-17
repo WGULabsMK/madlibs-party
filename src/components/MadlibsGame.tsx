@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback } from 'react';
 import { toast } from 'sonner';
-import { Gamepad2, Play, Square, Edit3, Download, ArrowLeft, Users, Send, Eye, Shield, RotateCcw } from 'lucide-react';
+import { Gamepad2, Play, Square, Edit3, Download, ArrowLeft, Users, Send, Eye, Shield, RotateCcw, Copy } from 'lucide-react';
 import { Card, Button, Input, Header, Badge, Alert } from './ui';
 import { StoryEditor } from './StoryEditor';
 import { DevBar } from './DevBar';
@@ -317,6 +317,17 @@ No one passed, but everyone agreed it was the most educational celebration ever.
     }
   };
 
+  const handleCopyCode = async () => {
+    if (!currentGame) return;
+    try {
+      await navigator.clipboard.writeText(currentGame.code);
+      showAlert('Game code copied to clipboard!', 'success');
+    } catch (e) {
+      console.error('Copy error:', e);
+      showAlert('Failed to copy code', 'error');
+    }
+  };
+
   const handleJoinGame = () => {
     if (!gameCode.trim()) {
       showAlert('Please enter a game code', 'warning');
@@ -552,8 +563,19 @@ No one passed, but everyone agreed it was the most educational celebration ever.
                     ? '🎮 Active'
                     : '✅ Ended'}
               </Badge>
-              <div className="px-4 py-2 bg-violet-100 rounded-lg font-bold text-violet-700 text-lg tracking-widest">
-                {currentGame.code}
+              <div className="flex items-center gap-2">
+                <div className="px-4 py-2 bg-violet-100 rounded-lg font-bold text-violet-700 text-lg tracking-widest">
+                  {currentGame.code}
+                </div>
+                <Button
+                  onClick={handleCopyCode}
+                  variant="ghost"
+                  size="sm"
+                  icon={<Copy className="w-4 h-4" />}
+                  title="Copy game code"
+                >
+                  Copy
+                </Button>
               </div>
             </div>
             <div className="flex gap-2 flex-wrap">
