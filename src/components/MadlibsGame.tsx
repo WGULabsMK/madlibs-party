@@ -7,7 +7,7 @@ import { DevBar } from './DevBar';
 import { generateId, generateGameCode } from '@/utils/helpers';
 import { generatePDF } from '@/utils/pdfGenerator';
 import { useGameStorage } from '@/hooks/useLocalStorage';
-import { MAX_PLAYERS } from '@/types';
+import { MAX_PLAYERS, BLANK_TYPE_HINTS } from '@/types';
 import type { Game, Blank, ViewType, AlertState, PlayerAnswers, Submission, SelectedAnswer } from '@/types';
 
 // Select random answers from submissions
@@ -646,6 +646,7 @@ No one passed, but everyone agreed it was the most educational celebration ever.
           <div className="space-y-4">
             {currentGame.blanks.map((blank, i) => {
               const filled = !!playerAnswers[blank.id]?.trim();
+              const typeHint = BLANK_TYPE_HINTS[blank.type];
               return (
                 <div
                   key={blank.id}
@@ -655,11 +656,20 @@ No one passed, but everyone agreed it was the most educational celebration ever.
                       : 'bg-gray-50 border-gray-200'
                   }`}
                 >
-                  <label className="flex items-center gap-2 mb-2 font-bold text-gray-800">
-                    <span className="w-7 h-7 rounded-full bg-violet-600 text-white flex items-center justify-center text-sm font-bold">
-                      {i + 1}
-                    </span>
-                    {blank.type}
+                  <label className="block mb-2">
+                    <div className="flex items-center gap-2 font-bold text-gray-800">
+                      <span className="w-7 h-7 rounded-full bg-violet-600 text-white flex items-center justify-center text-sm font-bold">
+                        {i + 1}
+                      </span>
+                      {blank.type}
+                    </div>
+                    {typeHint && (
+                      <div className="ml-9 mt-1 text-sm text-gray-500">
+                        <span className="italic">{typeHint.hint}</span>
+                        <span className="mx-1">—</span>
+                        <span className="text-gray-400">e.g., {typeHint.examples}</span>
+                      </div>
+                    )}
                   </label>
                   <input
                     type="text"
@@ -667,7 +677,7 @@ No one passed, but everyone agreed it was the most educational celebration ever.
                     onChange={(e) =>
                       setPlayerAnswers({ ...playerAnswers, [blank.id]: e.target.value })
                     }
-                    placeholder={`Enter a ${blank.type.toLowerCase()}...`}
+                    placeholder={typeHint ? `e.g., ${typeHint.examples.split(',')[0].trim()}` : `Enter a ${blank.type.toLowerCase()}...`}
                     className="w-full px-4 py-3 text-base border-2 border-gray-300 rounded-lg bg-white outline-none focus:border-violet-500 transition-colors"
                   />
                 </div>
