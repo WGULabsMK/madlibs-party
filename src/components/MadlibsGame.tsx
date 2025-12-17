@@ -438,7 +438,16 @@ No one passed, but everyone agreed it was the most educational celebration ever.
   // Home View
   const renderHome = () => (
     <div className="max-w-xl mx-auto">
-      <Header title="Mad Libs Party" subtitle="Create hilarious stories with friends!" />
+      <div className="flex flex-col items-center mb-8">
+        <img
+          src="/MadLabsLibs.png"
+          alt="Mad Libs Party"
+          className="max-w-full h-auto"
+        />
+        <p className="text-xl font-bold text-white text-center mt-6 mb-2">
+          Create hilarious stories with friends!
+        </p>
+      </div>
 
       <div className="space-y-6">
         <Card>
