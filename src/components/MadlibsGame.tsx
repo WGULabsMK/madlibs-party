@@ -487,6 +487,32 @@ No one passed, but everyone agreed it was the most educational celebration ever.
     showAlert('Answers submitted! Wait for the game to end.', 'success');
   };
 
+  const handleCancelPlayer = () => {
+    if (!currentGame) return;
+    if (!window.confirm('Are you sure you want to leave the game? Your answers will not be saved.')) return;
+
+    // Remove player from the game
+    const newPlayers = { ...currentGame.players };
+    delete newPlayers[playerId];
+
+    const updated: Game = {
+      ...currentGame,
+      players: newPlayers,
+      updatedAt: new Date().toISOString(),
+    };
+
+    saveGame(updated.code, updated);
+
+    // Reset player state and go home
+    setCurrentGame(null);
+    setPlayerId('');
+    setPlayerName('');
+    setPlayerAnswers({});
+    setGameCode('');
+    setView('home');
+    showAlert('You have left the game.', 'info');
+  };
+
   const renderFilledStory = (game: Game, answers: Record<string, SelectedAnswer | null>) => {
     let story = game.story;
     game.blanks.forEach((blank) => {
@@ -971,7 +997,7 @@ No one passed, but everyone agreed it was the most educational celebration ever.
             })}
           </div>
 
-          <div className="mt-6">
+          <div className="mt-6 space-y-3">
             <Button
               onClick={handleSubmitAnswers}
               fullWidth
@@ -981,6 +1007,15 @@ No one passed, but everyone agreed it was the most educational celebration ever.
               icon={<Send className="w-5 h-5" />}
             >
               {loading ? 'Submitting...' : 'Submit My Answers'}
+            </Button>
+            <Button
+              onClick={handleCancelPlayer}
+              fullWidth
+              variant="ghost"
+              size="sm"
+              icon={<X className="w-4 h-4" />}
+            >
+              Cancel & Leave Game
             </Button>
           </div>
         </Card>
