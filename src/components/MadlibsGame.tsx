@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback } from 'react';
 import { toast } from 'sonner';
-import { Gamepad2, Play, Square, Edit3, Download, ArrowLeft, Users, Send, Eye, Shield } from 'lucide-react';
+import { Gamepad2, Play, Square, Edit3, Download, ArrowLeft, Users, Send, Eye, Shield, RotateCcw } from 'lucide-react';
 import { Card, Button, Input, Header, Badge, Alert } from './ui';
 import { StoryEditor } from './StoryEditor';
 import { DevBar } from './DevBar';
@@ -286,6 +286,22 @@ No one passed, but everyone agreed it was the most educational celebration ever.
     showAlert('Results are now visible to all players!', 'success');
   };
 
+  const handleReopenGame = () => {
+    if (!currentGame) return;
+    setLoading(true);
+    const updated: Game = {
+      ...currentGame,
+      status: 'active',
+      selectedAnswers: null,
+      showResultsToPlayers: false,
+      updatedAt: new Date().toISOString(),
+    };
+    saveGame(updated.code, updated);
+    setLoading(false);
+    setCurrentGame(updated);
+    showAlert('Game reopened! Players can continue submitting answers.', 'success');
+  };
+
   const handleDownloadPDF = () => {
     if (!currentGame || !currentGame.selectedAnswers) {
       showAlert('No results to download yet', 'warning');
@@ -414,18 +430,6 @@ No one passed, but everyone agreed it was the most educational celebration ever.
       <Header title="Mad Libs Party" subtitle="Create hilarious stories with friends!" />
 
       <div className="space-y-6">
-        <Card hover onClick={handleAdminAccess} className="cursor-pointer">
-          <div className="flex items-center gap-4">
-            <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-violet-500 to-violet-700 flex items-center justify-center">
-              <Shield className="w-8 h-8 text-white" />
-            </div>
-            <div>
-              <h3 className="text-2xl font-bold font-display text-gray-800">Admin Dashboard</h3>
-              <p className="text-gray-500">{isAdmin ? 'Manage your games' : 'Login to create & manage games'}</p>
-            </div>
-          </div>
-        </Card>
-
         <Card>
           <div className="flex items-center gap-4 mb-5">
             <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-orange-400 to-orange-600 flex items-center justify-center">
@@ -452,6 +456,18 @@ No one passed, but everyone agreed it was the most educational celebration ever.
           <Button onClick={handleJoinGame} fullWidth variant="accent" disabled={loading}>
             {loading ? 'Joining...' : 'Join Game'}
           </Button>
+        </Card>
+
+        <Card hover onClick={handleAdminAccess} className="cursor-pointer">
+          <div className="flex items-center gap-4">
+            <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-violet-500 to-violet-700 flex items-center justify-center">
+              <Shield className="w-8 h-8 text-white" />
+            </div>
+            <div>
+              <h3 className="text-2xl font-bold font-display text-gray-800">Admin Dashboard</h3>
+              <p className="text-gray-500">{isAdmin ? 'Manage your games' : 'Login to create & manage games'}</p>
+            </div>
+          </div>
         </Card>
       </div>
     </div>
@@ -540,7 +556,7 @@ No one passed, but everyone agreed it was the most educational celebration ever.
                 {currentGame.code}
               </div>
             </div>
-            <div className="flex gap-2">
+            <div className="flex gap-2 flex-wrap">
               {currentGame.status === 'draft' && (
                 <Button onClick={handleStartGame} variant="success" disabled={loading} icon={<Play className="w-4 h-4" />}>
                   Start Game
@@ -549,6 +565,11 @@ No one passed, but everyone agreed it was the most educational celebration ever.
               {currentGame.status === 'active' && (
                 <Button onClick={handleEndGame} variant="error" disabled={loading} icon={<Square className="w-4 h-4" />}>
                   End Game
+                </Button>
+              )}
+              {currentGame.status === 'ended' && (
+                <Button onClick={handleReopenGame} variant="warning" disabled={loading} icon={<RotateCcw className="w-4 h-4" />}>
+                  Reopen Game
                 </Button>
               )}
               <Button onClick={() => setView('admin-create')} variant="secondary" icon={<Edit3 className="w-4 h-4" />}>
