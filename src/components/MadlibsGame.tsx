@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback } from 'react';
 import { toast } from 'sonner';
-import { Gamepad2, Play, Square, Edit3, Download, ArrowLeft, Users, Send, Eye, Shield, RotateCcw, Copy } from 'lucide-react';
+import { Gamepad2, Play, Square, Edit3, Download, ArrowLeft, Users, Send, Eye, Shield, RotateCcw, Copy, X, Trash2, ChevronDown, ChevronUp } from 'lucide-react';
 import { Card, Button, Input, Header, Badge, Alert } from './ui';
 import { StoryEditor } from './StoryEditor';
 import { DevBar } from './DevBar';
@@ -51,6 +51,7 @@ export function MadlibsGame() {
   const [playerAnswers, setPlayerAnswers] = useState<PlayerAnswers>({});
   const [hasSubmitted, setHasSubmitted] = useState(false);
   const [isAdmin, setIsAdmin] = useState(false);
+  const [expandedPlayerId, setExpandedPlayerId] = useState<string | null>(null);
 
   const { saveGame, loadGame } = useGameStorage();
 
@@ -326,6 +327,71 @@ No one passed, but everyone agreed it was the most educational celebration ever.
       console.error('Copy error:', e);
       showAlert('Failed to copy code', 'error');
     }
+  };
+
+  const handleRemovePlayer = (playerIdToRemove: string, playerNameToRemove: string) => {
+    if (!currentGame) return;
+    if (!window.confirm(`Remove ${playerNameToRemove} and all their answers?`)) return;
+
+    // Remove player from players object
+    const newPlayers = { ...currentGame.players };
+    delete newPlayers[playerIdToRemove];
+
+    // Remove all their submissions
+    const newSubmissions: Record<string, Submission[]> = {};
+    Object.entries(currentGame.submissions || {}).forEach(([blankId, submissions]) => {
+      newSubmissions[blankId] = submissions.filter(s => s.playerId !== playerIdToRemove);
+    });
+
+    const updated: Game = {
+      ...currentGame,
+      players: newPlayers,
+      submissions: newSubmissions,
+      updatedAt: new Date().toISOString(),
+    };
+
+    saveGame(updated.code, updated);
+    setCurrentGame(updated);
+    setExpandedPlayerId(null);
+    showAlert(`Removed ${playerNameToRemove} and their answers`, 'success');
+  };
+
+  const handleRemoveAnswer = (blankId: string, playerIdToRemove: string) => {
+    if (!currentGame) return;
+
+    const newSubmissions = { ...currentGame.submissions };
+    if (newSubmissions[blankId]) {
+      newSubmissions[blankId] = newSubmissions[blankId].filter(s => s.playerId !== playerIdToRemove);
+    }
+
+    const updated: Game = {
+      ...currentGame,
+      submissions: newSubmissions,
+      updatedAt: new Date().toISOString(),
+    };
+
+    saveGame(updated.code, updated);
+    setCurrentGame(updated);
+    showAlert('Answer removed', 'success');
+  };
+
+  const getPlayerAnswers = (playerIdToCheck: string): { blankId: string; blankType: string; answer: string }[] => {
+    if (!currentGame) return [];
+    const answers: { blankId: string; blankType: string; answer: string }[] = [];
+
+    currentGame.blanks.forEach(blank => {
+      const submissions = currentGame.submissions?.[blank.id] || [];
+      const playerSubmission = submissions.find(s => s.playerId === playerIdToCheck);
+      if (playerSubmission) {
+        answers.push({
+          blankId: blank.id,
+          blankType: blank.type,
+          answer: playerSubmission.answer,
+        });
+      }
+    });
+
+    return answers;
   };
 
   const handleJoinGame = () => {
@@ -632,24 +698,92 @@ No one passed, but everyone agreed it was the most educational celebration ever.
           <h3 className="text-xl font-bold font-display text-gray-800 mb-4 flex items-center gap-2">
             <Users className="w-5 h-5" /> Players ({playerCount})
           </h3>
+          <p className="text-sm text-gray-500 mb-4">Click on a player to view their answers and manage them.</p>
           {playerCount === 0 ? (
             <p className="text-gray-500 text-center py-5">
               No players yet. Share the code: <strong>{currentGame.code}</strong>
             </p>
           ) : (
-            <div className="flex flex-wrap gap-2">
+            <div className="space-y-2">
               {Object.entries(currentGame.players || {}).map(([id, player]) => {
                 const submitted = Object.values(currentGame.submissions || {}).some((arr) =>
                   arr.some((s) => s.playerId === id)
                 );
+                const isExpanded = expandedPlayerId === id;
+                const playerAnswersList = isExpanded ? getPlayerAnswers(id) : [];
+
                 return (
-                  <div
-                    key={id}
-                    className={`px-4 py-2 rounded-full font-semibold flex items-center gap-2 ${
-                      submitted ? 'bg-emerald-100 text-emerald-700' : 'bg-brand-blue/10 text-brand-blue'
-                    }`}
-                  >
-                    {submitted && '✅'} {player.name}
+                  <div key={id} className="border border-gray-200 rounded-xl overflow-hidden">
+                    {/* Player Header - Clickable */}
+                    <button
+                      onClick={() => setExpandedPlayerId(isExpanded ? null : id)}
+                      className={`w-full px-4 py-3 flex items-center justify-between transition-colors ${
+                        submitted
+                          ? 'bg-emerald-50 hover:bg-emerald-100'
+                          : 'bg-gray-50 hover:bg-gray-100'
+                      }`}
+                    >
+                      <div className="flex items-center gap-3">
+                        <span className={`font-semibold ${submitted ? 'text-emerald-700' : 'text-gray-700'}`}>
+                          {submitted && '✅ '}{player.name}
+                        </span>
+                        {submitted && (
+                          <span className="text-xs bg-emerald-200 text-emerald-800 px-2 py-0.5 rounded-full">
+                            {getPlayerAnswers(id).length} answers
+                          </span>
+                        )}
+                      </div>
+                      {isExpanded ? (
+                        <ChevronUp className="w-5 h-5 text-gray-400" />
+                      ) : (
+                        <ChevronDown className="w-5 h-5 text-gray-400" />
+                      )}
+                    </button>
+
+                    {/* Expanded Content */}
+                    {isExpanded && (
+                      <div className="px-4 py-4 bg-white border-t border-gray-200">
+                        {playerAnswersList.length === 0 ? (
+                          <p className="text-gray-500 text-sm text-center py-2">No answers submitted yet.</p>
+                        ) : (
+                          <div className="space-y-2 mb-4">
+                            <p className="text-sm font-semibold text-gray-600 mb-2">Answers:</p>
+                            {playerAnswersList.map((item, idx) => (
+                              <div
+                                key={item.blankId}
+                                className="flex items-center justify-between p-3 bg-gray-50 rounded-lg"
+                              >
+                                <div className="flex-1 min-w-0">
+                                  <span className="text-xs text-gray-500 block">{idx + 1}. {item.blankType}</span>
+                                  <span className="font-medium text-gray-800 truncate block">{item.answer}</span>
+                                </div>
+                                <button
+                                  onClick={(e) => {
+                                    e.stopPropagation();
+                                    handleRemoveAnswer(item.blankId, id);
+                                  }}
+                                  className="ml-3 p-2 text-red-500 hover:bg-red-50 rounded-lg transition-colors"
+                                  title="Remove this answer"
+                                >
+                                  <X className="w-4 h-4" />
+                                </button>
+                              </div>
+                            ))}
+                          </div>
+                        )}
+
+                        {/* Remove Player Button */}
+                        <Button
+                          onClick={() => handleRemovePlayer(id, player.name)}
+                          variant="error"
+                          size="sm"
+                          fullWidth
+                          icon={<Trash2 className="w-4 h-4" />}
+                        >
+                          Remove {player.name} & All Answers
+                        </Button>
+                      </div>
+                    )}
                   </div>
                 );
               })}
