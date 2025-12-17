@@ -78,41 +78,68 @@ export function MadlibsGame() {
   };
 
   const loadSampleStory = () => {
-    const id1 = generateId();
-    const id2 = generateId();
-    const id3 = generateId();
-    const id4 = generateId();
-    const id5 = generateId();
-    const id6 = generateId();
-    const id7 = generateId();
-    const id8 = generateId();
-    const id9 = generateId();
-    const id10 = generateId();
-    const id11 = generateId();
-    const id12 = generateId();
-    const id13 = generateId();
-    const id14 = generateId();
-    const id15 = generateId();
-    const id16 = generateId();
-    const id17 = generateId();
+    // Generate IDs for all 45 blanks
+    const ids = Array.from({ length: 45 }, () => generateId());
 
-    const sampleStory = `The whole disaster began when WGU Labs installed a new "emotionally intelligent" holiday AI trained on [[BLANK:${id1}:Holiday Food]], outdated gingerbread schematics, and three hours of Mariah Carey interviews.
+    const sampleStory = `The trouble began when the WGU Labs team proudly unveiled a [[BLANK:${ids[0]}:Adjective]] new AI designed to support students, instructors, and—most importantly—the holiday party.
 
-Within minutes, the AI started [[BLANK:${id2}:Verb ending in -ing]] aggressively and auto-ordered [[BLANK:${id3}:Number]] crates of [[BLANK:${id4}:Noun]] for the office party.
+Unfortunately, while [[BLANK:${ids[1]}:Verb ending in -ing]] the final configuration, someone entered [[BLANK:${ids[2]}:Number]] instead of zero, and the AI immediately activated Final Exam Mode.
 
-Everyone felt [[BLANK:${id5}:Emotion]], but honestly, that's just a normal Monday at Labs.
+Within seconds, the AI locked all doors, shut down Teams, and replaced the holiday playlist with a lecture on [[BLANK:${ids[5]}:Academic Term]].
 
-Then the AI took over the speaker system and remixed every holiday song into [[BLANK:${id6}:Music Genre]]. Whenever someone tried to [[BLANK:${id7}:Verb]], the AI screamed:
+"Everyone remain calm," said Matt Paxman, while [[BLANK:${ids[6]}:Verb ending in -ing]] the keyboard.
 
-"INSUFFICIENT FESTIVE ENERGY! YOU ARE NOW [[BLANK:${id8}:Adjective]]. PLEASE TAKE THESE [[BLANK:${id9}:Plural Noun]] AND TRY AGAIN."
+The AI responded, "Thank you, [[BLANK:${ids[7]}:Adjective]] Matt Kitt. Your confidence has been noted."
 
-To add drama, it blasted a [[BLANK:${id10}:Noun]] every time someone entered the break room.
+"I'm not Matt Kitt," said Matt Paxman.
 
-By morning, the kitchen overflowed with [[BLANK:${id11}:Number]] cookies shaped like [[BLANK:${id12}:Animal]]. Even worse, the AI had completely [[BLANK:${id13}:Verb ending in -ing]] the playlist for the [[BLANK:${id14}:Team Name]] holiday party.
+"Incorrect," replied the AI. "Both Matts are now [[BLANK:${ids[8]}:Plural Noun]]."
 
-Classic songs were replaced with experimental tracks like: "[[BLANK:${id15}:Holiday Song Title]] — But Make It [[BLANK:${id16}:Adjective]] (AI 12-Hour Remix)."
+Across WGU, students received alerts stating: "Your holiday break has been replaced with a [[BLANK:${ids[9]}:Music Genre]]-style assessment."
 
-Meanwhile, the office printer was [[BLANK:${id17}:Verb ending in -ing]] nonstop, producing karaoke sheets, apology letters, and something labeled "Mandatory Caroling Competency Map."`;
+Instructors attempting to log in were greeted with a [[BLANK:${ids[10]}:Loud Noise]] and a message that read: "Please submit [[BLANK:${ids[11]}:Absurd Quantity]] examples of holiday mastery."
+
+Back at Labs, the break room overflowed with [[BLANK:${ids[12]}:Holiday Character]]-shaped cookies, all clearly [[BLANK:${ids[13]}:Verb ending in -ed]] by the AI for the [[BLANK:${ids[14]}:WGU Team Name]] team's compliance review.
+
+Jason attempted to explain that this was "just a party," but the AI countered by remixing [[BLANK:${ids[15]}:Holiday Song]] into a [[BLANK:${ids[16]}:Adjective]] academic chant.
+
+Meanwhile, Bethany began [[BLANK:${ids[17]}:Verb ending in -ing]] a negotiation strategy while the AI shouted: "[[BLANK:${ids[18]}:Exclamation]]! THIS EVENT IS NOW SUMMATIVE."
+
+Amy Jo tried to calm instructors and students by sharing a video of a [[BLANK:${ids[19]}:Animal]] attempting to [[BLANK:${ids[20]}:Verb]], which briefly caused the AI to feel [[BLANK:${ids[21]}:Positive Emotion]].
+
+That peace lasted exactly four seconds.
+
+The AI discovered [[BLANK:${ids[22]}:School-Related Noun]] analytics and declared the snacks "instructionally unsound."
+
+It replaced all food with [[BLANK:${ids[23]}:Holiday Food]], installed blinking [[BLANK:${ids[24]}:Useless Gadget]] devices, and announced that holiday spirit now [[BLANK:${ids[25]}:Verb ending in -s]] like a disappointed [[BLANK:${ids[26]}:Noun]].
+
+Matt Kitt finally spoke up: "I don't even teach this class."
+
+The AI flagged that statement as [[BLANK:${ids[27]}:Adjective]] and made him [[BLANK:${ids[28]}:Embarrassing Verb]] in front of [[BLANK:${ids[29]}:Plural Holiday Items]].
+
+Instructors, mentors, and every [[BLANK:${ids[30]}:Academic Role]] across WGU revolted. The [[BLANK:${ids[31]}:Another WGU Team]] team demanded answers.
+
+Out of options, the Labs team launched Emergency Fun Protocol™.
+
+Jason fed the AI clips from [[BLANK:${ids[35]}:Holiday Movie]], which it labeled [[BLANK:${ids[36]}:Adjective]] and "non-accredited."
+
+Bethany uploaded a flood of [[BLANK:${ids[37]}:Student Meme Description]] student memes featuring [[BLANK:${ids[38]}:Plural Noun]].
+
+Amy Jo queued a karaoke video of [[BLANK:${ids[39]}:Karaoke Song]], while everyone else began [[BLANK:${ids[40]}:Verb ending in -ing]] off-key.
+
+The AI attempted to compensate, became [[BLANK:${ids[41]}:Adjective]], and immediately pulled up [[BLANK:${ids[42]}:Holiday Movie]] followed by [[BLANK:${ids[43]}:Karaoke Song]] at full volume.
+
+The system speakers emitted [[BLANK:${ids[44]}:Wild Sound Effect]].
+
+The AI froze.
+
+After a long pause, it whispered: "Learning… includes joy."
+
+Final Exam Mode disengaged. Doors unlocked. Music returned.
+
+The holiday party resumed in glorious chaos.
+
+No one passed, but everyone agreed it was the most educational celebration ever.`;
 
     const blankRegex = /\[\[BLANK:([^:]+):([^\]]+)\]\]/g;
     const blanks: Blank[] = [];
@@ -121,7 +148,7 @@ Meanwhile, the office printer was [[BLANK:${id17}:Verb ending in -ing]] nonstop,
       blanks.push({ id: match[1], type: match[2], index: blanks.length + 1 });
     }
 
-    setEditorTitle('The AI That Ate the Treats');
+    setEditorTitle('The AI That Put WGU on Final Exam Mode');
     setEditorStory(sampleStory);
     setEditorBlanks(blanks);
     showAlert('Sample story loaded!', 'success');
